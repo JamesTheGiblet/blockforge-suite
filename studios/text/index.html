@@ -198,7 +198,7 @@
             <div class="controls" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
                 <div class="control-group">
                     <label>Font Style</label>
-                    <select id="fontSelect">
+                    <select id="fontSelect" title="Font Style">
                         <option value="Arial">Sans Serif (Arial)</option>
                         <option value="Times New Roman">Serif (Times)</option>
                         <option value="Courier New">Monospace (Code)</option>
@@ -208,27 +208,18 @@
                 </div>
                 <div class="control-group">
                     <label>Text Height (studs)</label>
-                    <input type="number" id="heightInput" value="16" min="8" max="64">
+                    <input type="number" id="heightInput" value="16" min="8" max="64" title="Enter the text height in LEGO studs" placeholder="Text height (studs)">
                 </div>
                 <div class="control-group">
                     <label>Text Color</label>
-                    <select id="textColorSelect">
-                        <option value="Black">Black</option>
-                        <option value="White">White</option>
-                        <option value="Red">Red</option>
-                        <option value="Blue">Blue</option>
-                        <option value="Yellow">Yellow</option>
-                        <option value="Green">Green</option>
+                    <select id="textColorSelect" title="Text Color">
+                        <!-- Populated by JS -->
                     </select>
                 </div>
                 <div class="control-group">
-                    <label>Background Color</label>
+                    <label for="bgColorSelect">Background Color</label>
                     <select id="bgColorSelect">
-                        <option value="White">White</option>
-                        <option value="Light Bluish Gray" selected>Light Bluish Gray</option>
-                        <option value="Black">Black</option>
-                        <option value="Yellow">Yellow</option>
-                        <option value="none">None (Transparent)</option>
+                        <!-- Populated by JS -->
                     </select>
                 </div>
             </div>
@@ -261,10 +252,51 @@
     <script>
         // LEGO Colors Definition
         const LEGO_COLORS = {
-            "Red": [201, 26, 9], "Blue": [0, 85, 191], "Yellow": [255, 205, 3],
-            "Green": [0, 158, 96], "White": [255, 255, 255], "Black": [5, 19, 29],
-            "Light Bluish Gray": [156, 163, 168], "Dark Bluish Gray": [99, 95, 97],
-            "Orange": [255, 127, 0], "Lime": [190, 214, 0]
+            "Red": [201, 26, 9],
+            "Blue": [0, 85, 191],
+            "Yellow": [255, 205, 3],
+            "Green": [0, 158, 96],
+            "White": [255, 255, 255],
+            "Black": [5, 19, 29],
+            "Light Bluish Gray": [156, 163, 168],
+            "Dark Bluish Gray": [99, 95, 97],
+            "Reddish Brown": [88, 42, 18],
+            "Dark Brown": [53, 33, 0],
+            "Dark Tan": [137, 125, 98],
+            "Medium Brown": [115, 84, 58],
+            "Reddish Orange": [202, 76, 11],
+            "Orange": [255, 127, 0],
+            "Dark Orange": [168, 61, 21],
+            "Dark Red": [114, 0, 18],
+            "Coral": [255, 109, 119],
+            "Dark Pink": [222, 55, 139],
+            "Bright Pink": [255, 151, 204],
+            "Medium Dark Pink": [247, 133, 177],
+            "Purple": [129, 0, 123],
+            "Dark Purple": [63, 26, 86],
+            "Magenta": [146, 57, 120],
+            "Medium Lavender": [172, 120, 186],
+            "Lavender": [205, 164, 222],
+            "Dark Blue": [0, 32, 96],
+            "Medium Blue": [97, 175, 255],
+            "Medium Azure": [54, 174, 191],
+            "Light Aqua": [204, 255, 255],
+            "Dark Azure": [70, 155, 195],
+            "Bright Light Blue": [159, 195, 233],
+            "Sand Blue": [112, 129, 154],
+            "Dark Green": [0, 69, 26],
+            "Sand Green": [112, 142, 124],
+            "Olive Green": [122, 124, 69],
+            "Lime": [190, 214, 0],
+            "Yellowish Green": [226, 249, 154],
+            "Tan": [222, 198, 156],
+            "Light Nougat": [254, 204, 176],
+            "Medium Nougat": [170, 125, 85],
+            "Nougat": [204, 142, 105],
+            "Dark Nougat": [170, 104, 66],
+            "Flat Silver": [140, 140, 140],
+            "Metallic Silver": [140, 140, 140],
+            "Pearl Gold": [220, 188, 129]
         };
 
         const textInput = document.getElementById('textInput');
@@ -291,6 +323,21 @@
             localStorage.setItem('theme', next);
             toggleBtn.textContent = next === 'dark' ? '☀️' : '🌙';
         });
+
+        // Populate Selects
+        function populateColorSelects() {
+            const options = Object.keys(LEGO_COLORS).sort().map(color => 
+                `<option value="${color}">${color}</option>`
+            ).join('');
+            
+            textColorSelect.innerHTML = options;
+            bgColorSelect.innerHTML = `<option value="none">None (Transparent)</option>` + options;
+            
+            // Set defaults
+            textColorSelect.value = 'Black';
+            bgColorSelect.value = 'Light Bluish Gray';
+        }
+        populateColorSelects();
 
         function generateSign() {
             const text = textInput.value.toUpperCase();
