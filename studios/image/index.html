@@ -7,7 +7,7 @@
     <meta name="description" content="Convert images into LEGO mosaics with Forge Theory optimization">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#004E89">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23FF6B35' width='100' height='100'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/png" href="../../public/icon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <style>
         * {
@@ -16,11 +16,40 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg-gradient-start: #004E89;
+            --bg-gradient-end: #003560;
+            --container-bg: #ffffff;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --heading-color: #004E89;
+            --accent-color: #FF6B35;
+            --border-color: #dddddd;
+            --input-bg: #ffffff;
+            --panel-bg: #f0f4f8;
+            --tips-bg: #fff8f0;
+        }
+
+        [data-theme="dark"] {
+            --bg-gradient-start: #121212;
+            --bg-gradient-end: #1e1e1e;
+            --container-bg: #1e1e1e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #aaaaaa;
+            --heading-color: #64b5f6;
+            --accent-color: #FF8C61;
+            --border-color: #444444;
+            --input-bg: #2d2d2d;
+            --panel-bg: #262626;
+            --tips-bg: #2d2620;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #004E89 0%, #003560 100%);
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
             min-height: 100vh;
             padding: 20px;
+            color: var(--text-primary);
         }
 
         .header-bar {
@@ -61,7 +90,7 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
+            background: var(--container-bg);
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
@@ -69,25 +98,25 @@
 
         h1 {
             text-align: center;
-            color: #004E89;
+            color: var(--heading-color);
             margin-bottom: 10px;
             font-size: 32px;
         }
 
         h1 .forge {
-            color: #FF6B35;
+            color: var(--accent-color);
         }
 
         .subtitle {
             text-align: center;
-            color: #666;
+            color: var(--text-secondary);
             margin-bottom: 30px;
             font-size: 16px;
         }
 
         /* Forge Theory Panel */
         .forge-theory-panel {
-            background: linear-gradient(135deg, #004E89 0%, #003560 100%);
+            background: linear-gradient(135deg, var(--heading-color) 0%, var(--bg-gradient-end) 100%);
             color: white;
             border-radius: 15px;
             padding: 20px;
@@ -108,7 +137,7 @@
         }
 
         .forge-toggle-btn {
-            background: #FF6B35;
+            background: var(--accent-color);
             color: white;
             border: none;
             padding: 8px 16px;
@@ -120,7 +149,7 @@
         }
 
         .forge-toggle-btn:hover {
-            background: #FF8C61;
+            filter: brightness(1.1);
             transform: translateY(-2px);
         }
 
@@ -157,7 +186,7 @@
         .forge-stat-value {
             font-size: 24px;
             font-weight: 700;
-            color: #FF6B35;
+            color: var(--accent-color);
         }
 
         .forge-explanation {
@@ -165,7 +194,7 @@
             padding: 15px;
             border-radius: 8px;
             margin-top: 15px;
-            border-left: 4px solid #FF6B35;
+            border-left: 4px solid var(--accent-color);
             font-size: 14px;
             line-height: 1.6;
         }
@@ -178,28 +207,28 @@
             font-size: 16px;
             margin: 10px 0;
             text-align: center;
-            color: #FF6B35;
+            color: var(--accent-color);
         }
 
         .upload-section {
-            border: 3px dashed #004E89;
+            border: 3px dashed var(--heading-color);
             border-radius: 15px;
             padding: 40px 20px;
             text-align: center;
             margin-bottom: 20px;
-            background: #f0f4f8;
+            background: var(--panel-bg);
             cursor: pointer;
             transition: all 0.3s;
         }
 
         .upload-section:hover {
-            background: #e8f0f8;
-            border-color: #FF6B35;
+            filter: brightness(0.95);
+            border-color: var(--accent-color);
         }
 
         .upload-section.drag-over {
-            background: #d8e8f8;
-            border-color: #FF6B35;
+            background: var(--input-bg);
+            border-color: var(--accent-color);
         }
 
         #fileInput {
@@ -225,7 +254,7 @@
 
         label {
             font-weight: 600;
-            color: #004E89;
+            color: var(--heading-color);
             font-size: 14px;
         }
 
@@ -233,7 +262,7 @@
             width: 100%;
             height: 8px;
             border-radius: 5px;
-            background: #ddd;
+            background: var(--border-color);
             outline: none;
             -webkit-appearance: none;
             appearance: none;
@@ -245,7 +274,7 @@
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            background: #FF6B35;
+            background: var(--accent-color);
             cursor: pointer;
         }
 
@@ -253,14 +282,14 @@
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            background: #FF6B35;
+            background: var(--accent-color);
             cursor: pointer;
             border: none;
         }
 
         .value-display {
             display: inline-block;
-            background: #FF6B35;
+            background: var(--accent-color);
             color: white;
             padding: 4px 12px;
             border-radius: 12px;
@@ -271,7 +300,7 @@
         button {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, #004E89 0%, #003560 100%);
+            background: linear-gradient(135deg, var(--heading-color) 0%, var(--bg-gradient-end) 100%);
             color: white;
             border: none;
             border-radius: 12px;
@@ -293,7 +322,7 @@
         }
 
         button.secondary {
-            background: #FF6B35;
+            background: var(--accent-color);
             box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
         }
 
@@ -332,16 +361,16 @@
         }
 
         .preview-box {
-            border: 2px solid #e5e7eb;
+            border: 2px solid var(--border-color);
             border-radius: 12px;
             padding: 15px;
-            background: #f9fafb;
+            background: var(--panel-bg);
         }
 
         .preview-title {
             font-weight: 600;
             margin-bottom: 10px;
-            color: #004E89;
+            color: var(--heading-color);
             font-size: 14px;
         }
 
@@ -351,7 +380,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: white;
+            background: var(--container-bg);
             border-radius: 8px;
             overflow: hidden;
             padding: 10px;
@@ -364,7 +393,7 @@
             image-rendering: -moz-crisp-edges;
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
-            border: 2px solid #e5e7eb;
+            border: 2px solid var(--border-color);
             border-radius: 4px;
         }
 
@@ -374,9 +403,9 @@
             gap: 10px;
             margin-top: 20px;
             padding: 15px;
-            background: #f0f4f8;
+            background: var(--panel-bg);
             border-radius: 12px;
-            border: 2px solid #004E89;
+            border: 2px solid var(--heading-color);
         }
 
         .stat-item {
@@ -385,21 +414,21 @@
 
         .stat-label {
             font-size: 12px;
-            color: #666;
+            color: var(--text-secondary);
             margin-bottom: 4px;
         }
 
         .stat-value {
             font-size: 20px;
             font-weight: 700;
-            color: #004E89;
+            color: var(--heading-color);
         }
 
         .color-list {
             max-height: 300px;
             overflow-y: auto;
             padding: 10px;
-            background: white;
+            background: var(--container-bg);
             border-radius: 8px;
         }
 
@@ -409,7 +438,7 @@
             gap: 10px;
             padding: 8px;
             margin-bottom: 8px;
-            background: #f9fafb;
+            background: var(--panel-bg);
             border-radius: 8px;
         }
 
@@ -417,7 +446,7 @@
             width: 30px;
             height: 30px;
             border-radius: 6px;
-            border: 2px solid #ddd;
+            border: 2px solid var(--border-color);
             flex-shrink: 0;
         }
 
@@ -431,11 +460,11 @@
 
         .color-name {
             font-weight: 600;
-            color: #333;
+            color: var(--text-primary);
         }
 
         .color-count {
-            background: #FF6B35;
+            background: var(--accent-color);
             color: white;
             padding: 2px 8px;
             border-radius: 10px;
@@ -444,22 +473,22 @@
         }
 
         .tips-box {
-            background: #fff8f0;
+            background: var(--tips-bg);
             padding: 15px;
             border-radius: 12px;
             margin-bottom: 20px;
-            border-left: 4px solid #FF6B35;
+            border-left: 4px solid var(--accent-color);
         }
 
         .tips-title {
             font-weight: 600;
             margin-bottom: 8px;
-            color: #004E89;
+            color: var(--heading-color);
         }
 
         .tips-box ul {
             font-size: 13px;
-            color: #555;
+            color: var(--text-primary);
             line-height: 1.6;
             padding-left: 20px;
         }
@@ -467,11 +496,11 @@
         select {
             width: 100%;
             padding: 12px;
-            border: 2px solid #ddd;
+            border: 2px solid var(--border-color);
             border-radius: 8px;
             font-size: 14px;
-            background: white;
-            color: #333;
+            background: var(--input-bg);
+            color: var(--text-primary);
         }
 
         @media (max-width: 640px) {
@@ -492,12 +521,75 @@
                 align-items: flex-start;
             }
         }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-left: auto;
+        }
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* Loading Spinner */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--accent-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+        .loading-text {
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
     <div class="header-bar">
         <a href="../../index.html" class="back-btn">← Back to BlockForge</a>
         <div class="header-title">BLOCK<span class="forge">FORGE</span> - Image Studio</div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle Dark Mode">
+            <span id="themeIcon">🌙</span>
+        </button>
     </div>
 
     <div class="container">
@@ -644,7 +736,7 @@
                     <input type="checkbox" id="removeBackgroundCheckbox" style="width: auto; height: 20px;">
                     Auto-detect & remove background
                 </label>
-                <div id="detectedBgInfo" style="display: none; margin-top: 8px; padding: 10px; background: #f0f4f8; border-radius: 8px; font-size: 13px;">
+                <div id="detectedBgInfo" style="display: none; margin-top: 8px; padding: 10px; background: var(--panel-bg); border-radius: 8px; font-size: 13px;">
                     <strong>Detected:</strong> <span id="detectedBgColor">-</span>
                 </div>
             </div>
@@ -703,6 +795,11 @@
                 <div class="color-list" id="colorList"></div>
             </div>
         </div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Forging Mosaic...</div>
     </div>
 
     <script src="../../shared/blockforge-core.js"></script>
@@ -1394,13 +1491,13 @@
                     uploadedImage = img;
                     generateBtn.disabled = false;
                     uploadSection.innerHTML = `
-                        <div style="font-size: 18px; font-weight: 600; color: #004E89;">
+                        <div style="font-size: 18px; font-weight: 600; color: var(--heading-color);">
                             ✓ Image loaded
                         </div>
-                        <div style="font-size: 14px; color: #666; margin-top: 8px;">
+                        <div style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">
                             ${img.width} × ${img.height} pixels
                         </div>
-                        <div style="font-size: 12px; color: #999; margin-top: 4px;">
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px; opacity: 0.7;">
                             Click to change
                         </div>
                     `;
@@ -1682,198 +1779,226 @@
         function generateMosaic() {
             if (!uploadedImage) return;
 
-            previewSection.classList.add('active');
+            // Show loading spinner
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.classList.add('active');
 
-            const targetWidth = currentTileWidth;
-            const aspectRatio = uploadedImage.height / uploadedImage.width;
-            const targetHeight = Math.round(targetWidth * aspectRatio);
+            // Use setTimeout to allow UI to update before heavy processing
+            setTimeout(() => {
+                previewSection.classList.add('active');
 
-            originalCanvas.width = targetWidth;
-            originalCanvas.height = targetHeight;
-            legoCanvas.width = targetWidth;
-            legoCanvas.height = targetHeight;
+                const targetWidth = currentTileWidth;
+                const aspectRatio = uploadedImage.height / uploadedImage.width;
+                const targetHeight = Math.round(targetWidth * aspectRatio);
 
-            const displayScale = Math.max(300 / Math.max(targetWidth, targetHeight), 1);
-            const displayWidth = targetWidth * displayScale;
-            const displayHeight = targetHeight * displayScale;
-            
-            originalCanvas.style.width = `${displayWidth}px`;
-            originalCanvas.style.height = `${displayHeight}px`;
-            legoCanvas.style.width = `${displayWidth}px`;
-            legoCanvas.style.height = `${displayHeight}px`;
+                originalCanvas.width = targetWidth;
+                originalCanvas.height = targetHeight;
+                legoCanvas.width = targetWidth;
+                legoCanvas.height = targetHeight;
 
-            const originalCtx = originalCanvas.getContext('2d');
-            const legoCtx = legoCanvas.getContext('2d');
-
-            if (backgroundColor !== 'none') {
-                const bgRgb = LEGO_COLORS[backgroundColor];
-                originalCtx.fillStyle = `rgb(${bgRgb[0]}, ${bgRgb[1]}, ${bgRgb[2]})`;
-                originalCtx.fillRect(0, 0, targetWidth, targetHeight);
-                legoCtx.fillStyle = `rgb(${bgRgb[0]}, ${bgRgb[1]}, ${bgRgb[2]})`;
-                legoCtx.fillRect(0, 0, targetWidth, targetHeight);
-            }
-
-            originalCtx.imageSmoothingEnabled = false;
-            originalCtx.drawImage(uploadedImage, 0, 0, targetWidth, targetHeight);
-
-            const imageData = originalCtx.getImageData(0, 0, targetWidth, targetHeight);
-            const pixels = imageData.data;
-
-            const contrastFactor = contrast / 100;
-            const brightnessFactor = brightness / 100;
-            const saturationFactor = saturation / 100;
-
-            if (autoContrast) {
-                autoEnhanceContrast(imageData);
-            }
-
-            for (let i = 0; i < pixels.length; i += 4) {
-                let r = pixels[i];
-                let g = pixels[i + 1];
-                let b = pixels[i + 2];
-
-                r = adjustContrast(r, contrastFactor);
-                g = adjustContrast(g, contrastFactor);
-                b = adjustContrast(b, contrastFactor);
-
-                r = adjustBrightness(r, brightnessFactor);
-                g = adjustBrightness(g, brightnessFactor);
-                b = adjustBrightness(b, brightnessFactor);
-
-                [r, g, b] = adjustSaturation(r, g, b, saturationFactor);
-
-                pixels[i] = r;
-                pixels[i + 1] = g;
-                pixels[i + 2] = b;
-            }
-
-            if (sharpness > 0) {
-                applySharpness(imageData, targetWidth, targetHeight, sharpness);
-            }
-
-            let backgroundMask = null;
-            if (removeBackground) {
-                detectedBackgroundColor = detectBackgroundColor(imageData, targetWidth, targetHeight);
-                if (detectedBackgroundColor) {
-                    backgroundMask = removeBackgroundFromImage(imageData, targetWidth, targetHeight, detectedBackgroundColor);
-                    
-                    detectedBgInfo.style.display = 'block';
-                    detectedBgColor.textContent = `RGB(${detectedBackgroundColor[0]}, ${detectedBackgroundColor[1]}, ${detectedBackgroundColor[2]})`;
-                    detectedBgColor.style.background = `rgb(${detectedBackgroundColor[0]}, ${detectedBackgroundColor[1]}, ${detectedBackgroundColor[2]})`;
-                    detectedBgColor.style.padding = '4px 8px';
-                    detectedBgColor.style.borderRadius = '4px';
-                    detectedBgColor.style.color = (detectedBackgroundColor[0] + detectedBackgroundColor[1] + detectedBackgroundColor[2]) > 384 ? '#000' : '#fff';
-                }
-            } else {
-                detectedBgInfo.style.display = 'none';
-            }
-
-            originalCtx.putImageData(imageData, 0, 0);
-
-            const processedData = originalCtx.getImageData(0, 0, targetWidth, targetHeight);
-            const processedPixels = processedData.data;
-
-            const colorCounts = {};
-            tileMap = [];
-
-            if (enableDither) {
-                applyDithering(processedData, targetWidth, targetHeight);
+                const displayScale = Math.max(300 / Math.max(targetWidth, targetHeight), 1);
+                const displayWidth = targetWidth * displayScale;
+                const displayHeight = targetHeight * displayScale;
                 
-                for (let y = 0; y < targetHeight; y++) {
-                    const row = [];
-                    for (let x = 0; x < targetWidth; x++) {
-                        const i = (y * targetWidth + x) * 4;
-                        const r = processedPixels[i];
-                        const g = processedPixels[i + 1];
-                        const b = processedPixels[i + 2];
-                        
-                        if (backgroundMask && backgroundMask[y][x]) {
-                            row.push(null);
-                            continue;
-                        }
-                        
-                        const { name } = findClosestLegoColor(r, g, b);
-                        colorCounts[name] = (colorCounts[name] || 0) + 1;
-                        row.push(name);
-                    }
-                    tileMap.push(row);
+                originalCanvas.style.width = `${displayWidth}px`;
+                originalCanvas.style.height = `${displayHeight}px`;
+                legoCanvas.style.width = `${displayWidth}px`;
+                legoCanvas.style.height = `${displayHeight}px`;
+
+                const originalCtx = originalCanvas.getContext('2d');
+                const legoCtx = legoCanvas.getContext('2d');
+
+                if (backgroundColor !== 'none') {
+                    const bgRgb = LEGO_COLORS[backgroundColor];
+                    originalCtx.fillStyle = `rgb(${bgRgb[0]}, ${bgRgb[1]}, ${bgRgb[2]})`;
+                    originalCtx.fillRect(0, 0, targetWidth, targetHeight);
+                    legoCtx.fillStyle = `rgb(${bgRgb[0]}, ${bgRgb[1]}, ${bgRgb[2]})`;
+                    legoCtx.fillRect(0, 0, targetWidth, targetHeight);
                 }
-            } else {
-                for (let y = 0; y < targetHeight; y++) {
-                    const row = [];
-                    for (let x = 0; x < targetWidth; x++) {
-                        const i = (y * targetWidth + x) * 4;
-                        const r = processedPixels[i];
-                        const g = processedPixels[i + 1];
-                        const b = processedPixels[i + 2];
 
-                        if (backgroundMask && backgroundMask[y][x]) {
-                            row.push(null);
-                            continue;
-                        }
+                originalCtx.imageSmoothingEnabled = false;
+                originalCtx.drawImage(uploadedImage, 0, 0, targetWidth, targetHeight);
 
-                        const { name, rgb } = findClosestLegoColor(r, g, b);
+                const imageData = originalCtx.getImageData(0, 0, targetWidth, targetHeight);
+                const pixels = imageData.data;
 
-                        processedPixels[i] = rgb[0];
-                        processedPixels[i + 1] = rgb[1];
-                        processedPixels[i + 2] = rgb[2];
+                const contrastFactor = contrast / 100;
+                const brightnessFactor = brightness / 100;
+                const saturationFactor = saturation / 100;
 
-                        colorCounts[name] = (colorCounts[name] || 0) + 1;
-                        row.push(name);
-                    }
-                    tileMap.push(row);
+                if (autoContrast) {
+                    autoEnhanceContrast(imageData);
                 }
-            }
 
-            legoCtx.putImageData(processedData, 0, 0);
+                for (let i = 0; i < pixels.length; i += 4) {
+                    let r = pixels[i];
+                    let g = pixels[i + 1];
+                    let b = pixels[i + 2];
 
-            if (showGrid) {
-                drawGrid(originalCanvas, targetWidth, targetHeight);
-                drawGrid(legoCanvas, targetWidth, targetHeight);
-            }
+                    r = adjustContrast(r, contrastFactor);
+                    g = adjustContrast(g, contrastFactor);
+                    b = adjustContrast(b, contrastFactor);
 
-            // Update stats
-            const actualTileCount = Object.values(colorCounts).reduce((sum, count) => sum + count, 0);
-            const totalGridSpaces = targetWidth * targetHeight;
-            const physicalWidthCm = (targetWidth * 8 / 10).toFixed(1);
-            const physicalHeightCm = (targetHeight * 8 / 10).toFixed(1);
+                    r = adjustBrightness(r, brightnessFactor);
+                    g = adjustBrightness(g, brightnessFactor);
+                    b = adjustBrightness(b, brightnessFactor);
 
-            document.getElementById('dimensions').textContent = `${targetWidth}×${targetHeight}`;
-            document.getElementById('totalTiles').textContent = removeBackground 
-                ? `${actualTileCount.toLocaleString()} (${totalGridSpaces.toLocaleString()} grid spaces)` 
-                : actualTileCount.toLocaleString();
-            document.getElementById('uniqueColors').textContent = Object.keys(colorCounts).length;
-            document.getElementById('physicalSize').textContent = `${physicalWidthCm}×${physicalHeightCm} cm`;
+                    [r, g, b] = adjustSaturation(r, g, b, saturationFactor);
 
-            // Update Forge Theory stats
-            updateForgeTheoryStats();
+                    pixels[i] = r;
+                    pixels[i + 1] = g;
+                    pixels[i + 2] = b;
+                }
 
-            // Display color breakdown
-            const colorList = document.getElementById('colorList');
-            const sortedColors = Object.entries(colorCounts).sort((a, b) => b[1] - a[1]);
+                if (sharpness > 0) {
+                    applySharpness(imageData, targetWidth, targetHeight, sharpness);
+                }
 
-            colorList.innerHTML = sortedColors.map(([name, count]) => {
-                const rgb = LEGO_COLORS[name];
-                return `
-                    <div class="color-item">
-                        <div class="color-swatch" style="background: rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]});"></div>
-                        <div class="color-info">
-                            <span class="color-name">${name}</span>
-                            <span class="color-count">${count}</span>
+                let backgroundMask = null;
+                if (removeBackground) {
+                    detectedBackgroundColor = detectBackgroundColor(imageData, targetWidth, targetHeight);
+                    if (detectedBackgroundColor) {
+                        backgroundMask = removeBackgroundFromImage(imageData, targetWidth, targetHeight, detectedBackgroundColor);
+                        
+                        detectedBgInfo.style.display = 'block';
+                        detectedBgColor.textContent = `RGB(${detectedBackgroundColor[0]}, ${detectedBackgroundColor[1]}, ${detectedBackgroundColor[2]})`;
+                        detectedBgColor.style.background = `rgb(${detectedBackgroundColor[0]}, ${detectedBackgroundColor[1]}, ${detectedBackgroundColor[2]})`;
+                        detectedBgColor.style.padding = '4px 8px';
+                        detectedBgColor.style.borderRadius = '4px';
+                        detectedBgColor.style.color = (detectedBackgroundColor[0] + detectedBackgroundColor[1] + detectedBackgroundColor[2]) > 384 ? '#000' : '#fff';
+                    }
+                } else {
+                    detectedBgInfo.style.display = 'none';
+                }
+
+                originalCtx.putImageData(imageData, 0, 0);
+
+                const processedData = originalCtx.getImageData(0, 0, targetWidth, targetHeight);
+                const processedPixels = processedData.data;
+
+                const colorCounts = {};
+                tileMap = [];
+
+                if (enableDither) {
+                    applyDithering(processedData, targetWidth, targetHeight);
+                    
+                    for (let y = 0; y < targetHeight; y++) {
+                        const row = [];
+                        for (let x = 0; x < targetWidth; x++) {
+                            const i = (y * targetWidth + x) * 4;
+                            const r = processedPixels[i];
+                            const g = processedPixels[i + 1];
+                            const b = processedPixels[i + 2];
+                            
+                            if (backgroundMask && backgroundMask[y][x]) {
+                                row.push(null);
+                                continue;
+                            }
+                            
+                            const { name } = findClosestLegoColor(r, g, b);
+                            colorCounts[name] = (colorCounts[name] || 0) + 1;
+                            row.push(name);
+                        }
+                        tileMap.push(row);
+                    }
+                } else {
+                    for (let y = 0; y < targetHeight; y++) {
+                        const row = [];
+                        for (let x = 0; x < targetWidth; x++) {
+                            const i = (y * targetWidth + x) * 4;
+                            const r = processedPixels[i];
+                            const g = processedPixels[i + 1];
+                            const b = processedPixels[i + 2];
+
+                            if (backgroundMask && backgroundMask[y][x]) {
+                                row.push(null);
+                                continue;
+                            }
+
+                            const { name, rgb } = findClosestLegoColor(r, g, b);
+
+                            processedPixels[i] = rgb[0];
+                            processedPixels[i + 1] = rgb[1];
+                            processedPixels[i + 2] = rgb[2];
+
+                            colorCounts[name] = (colorCounts[name] || 0) + 1;
+                            row.push(name);
+                        }
+                        tileMap.push(row);
+                    }
+                }
+
+                legoCtx.putImageData(processedData, 0, 0);
+
+                if (showGrid) {
+                    drawGrid(originalCanvas, targetWidth, targetHeight);
+                    drawGrid(legoCanvas, targetWidth, targetHeight);
+                }
+
+                // Update stats
+                const actualTileCount = Object.values(colorCounts).reduce((sum, count) => sum + count, 0);
+                const totalGridSpaces = targetWidth * targetHeight;
+                const physicalWidthCm = (targetWidth * 8 / 10).toFixed(1);
+                const physicalHeightCm = (targetHeight * 8 / 10).toFixed(1);
+
+                document.getElementById('dimensions').textContent = `${targetWidth}×${targetHeight}`;
+                document.getElementById('totalTiles').textContent = removeBackground 
+                    ? `${actualTileCount.toLocaleString()} (${totalGridSpaces.toLocaleString()} grid spaces)` 
+                    : actualTileCount.toLocaleString();
+                document.getElementById('uniqueColors').textContent = Object.keys(colorCounts).length;
+                document.getElementById('physicalSize').textContent = `${physicalWidthCm}×${physicalHeightCm} cm`;
+
+                // Update Forge Theory stats
+                updateForgeTheoryStats();
+
+                // Display color breakdown
+                const colorList = document.getElementById('colorList');
+                const sortedColors = Object.entries(colorCounts).sort((a, b) => b[1] - a[1]);
+
+                colorList.innerHTML = sortedColors.map(([name, count]) => {
+                    const rgb = LEGO_COLORS[name];
+                    return `
+                        <div class="color-item">
+                            <div class="color-swatch" style="background: rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]});"></div>
+                            <div class="color-info">
+                                <span class="color-name">${name}</span>
+                                <span class="color-count">${count}</span>
+                            </div>
                         </div>
-                    </div>
-                `;
-            }).join('');
+                    `;
+                }).join('');
 
-            previewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                previewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-            downloadBtn.style.display = 'block';
-            exportPartsBtn.style.display = 'block';
-            exportInstructionsBtn.style.display = 'block';
+                downloadBtn.style.display = 'block';
+                exportPartsBtn.style.display = 'block';
+                exportInstructionsBtn.style.display = 'block';
+
+                // Hide loading spinner
+                loadingOverlay.classList.remove('active');
+            }, 50);
         }
 
+        // Theme Toggle Logic
+        const toggleBtn = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const html = document.documentElement;
+
+        // Initialize theme
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        html.setAttribute('data-theme', savedTheme);
+        if(themeIcon) themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+        toggleBtn.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        });
+
         // PWA installation
-        if ('serviceWorker' in navigator) {
+        if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js').catch(() => {
                     console.log('Service worker registration optional');
