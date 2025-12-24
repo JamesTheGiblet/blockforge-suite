@@ -370,7 +370,7 @@
             <div class="controls">
                 <div class="control-group">
                     <label>Font Style</label>
-                    <select id="fontSelect">
+                    <select id="fontSelect" title="Font Style">
                         <option value="Arial">Sans Serif (Clean)</option>
                         <option value="Arial Black">Bold Sans (Impact)</option>
                         <option value="Times New Roman">Serif (Classic)</option>
@@ -381,22 +381,22 @@
                 
                 <div class="control-group">
                     <label>Height: <span class="value-display" id="heightValue">24</span> studs</label>
-                    <input type="range" id="heightSlider" min="12" max="64" value="24" step="4">
+                    <input type="range" id="heightSlider" min="12" max="64" value="24" step="4" title="Height in studs">
                 </div>
                 
                 <div class="control-group">
                     <label>Text Color</label>
-                    <select id="textColorSelect"></select>
+                    <select id="textColorSelect" title="Text Color"></select>
                 </div>
                 
                 <div class="control-group">
-                    <label>Background Color</label>
-                    <select id="bgColorSelect"></select>
+                    <label for="bgColorSelect">Background Color</label>
+                    <select id="bgColorSelect" title="Background Color"></select>
                 </div>
 
                 <div class="control-group">
-                    <label>Build Style</label>
-                    <select id="styleSelect">
+                    <label for="styleSelect">Build Style</label>
+                    <select id="styleSelect" name="build-style">
                         <option value="flat">Flat (1 plate thick)</option>
                         <option value="raised" selected>Raised (3D effect)</option>
                         <option value="deep">Deep (5 plates thick)</option>
