@@ -247,6 +247,50 @@
             margin-bottom: 20px;
         }
 
+        /* Tab Interface */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            color: var(--heading-color);
+            background: rgba(0,0,0,0.02);
+        }
+
+        .tab-btn.active {
+            color: var(--heading-color);
+            border-bottom-color: var(--accent-color);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         @media (max-width: 900px) {
             .preview-section {
                 grid-template-columns: 1fr;
@@ -385,6 +429,16 @@
                 </div>
                 
                 <div class="control-group">
+                    <label>Position X: <span class="value-display" id="offsetXValue">0</span></label>
+                    <input type="range" id="offsetXSlider" min="-50" max="50" value="0" step="1" title="Horizontal Offset">
+                </div>
+
+                <div class="control-group">
+                    <label>Position Y: <span class="value-display" id="offsetYValue">0</span></label>
+                    <input type="range" id="offsetYSlider" min="-20" max="20" value="0" step="1" title="Vertical Offset">
+                </div>
+
+                <div class="control-group">
                     <label>Text Color</label>
                     <select id="textColorSelect" title="Text Color"></select>
                 </div>
@@ -419,14 +473,21 @@
         </div>
 
         <div class="preview-section" style="display: none;" id="previewSection">
-            <div class="preview-box">
-                <div class="preview-title">2D Preview (Top View)</div>
-                <canvas id="canvas2D"></canvas>
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('2d', this)">2D Blueprint</button>
+                <button class="tab-btn" onclick="switchTab('3d', this)">3D Stacked Text</button>
             </div>
 
-            <div class="preview-box">
-                <div class="preview-title">3D Preview (Perspective)</div>
-                <canvas id="canvas3D"></canvas>
+            <div id="tab-2d" class="tab-content active">
+                <div class="preview-box">
+                    <canvas id="canvas2D"></canvas>
+                </div>
+            </div>
+
+            <div id="tab-3d" class="tab-content">
+                <div class="preview-box">
+                    <canvas id="canvas3D"></canvas>
+                </div>
             </div>
         </div>
 
@@ -481,6 +542,10 @@
         const fontSelect = document.getElementById('fontSelect');
         const heightSlider = document.getElementById('heightSlider');
         const heightValue = document.getElementById('heightValue');
+        const offsetXSlider = document.getElementById('offsetXSlider');
+        const offsetXValue = document.getElementById('offsetXValue');
+        const offsetYSlider = document.getElementById('offsetYSlider');
+        const offsetYValue = document.getElementById('offsetYValue');
         const textColorSelect = document.getElementById('textColorSelect');
         const bgColorSelect = document.getElementById('bgColorSelect');
         const styleSelect = document.getElementById('styleSelect');
@@ -524,6 +589,15 @@
         heightSlider.addEventListener('input', (e) => {
             heightValue.textContent = e.target.value;
         });
+        offsetXSlider.addEventListener('input', (e) => {
+            offsetXValue.textContent = e.target.value;
+            generateSign();
+        });
+        offsetYSlider.addEventListener('input', (e) => {
+            offsetYValue.textContent = e.target.value;
+            generateSign();
+        });
+        styleSelect.addEventListener('change', generateSign);
 
         function toggleForge() {
             const content = document.getElementById('forgeContent');
@@ -537,6 +611,13 @@
             }
         }
 
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+        }
+
         // THIS IS WHERE THE MAGIC HAPPENS
         function generateSign() {
             const text = textInput.value.toUpperCase().trim();
@@ -544,6 +625,8 @@
 
             const height = parseInt(heightSlider.value);
             const font = fontSelect.value;
+            const offsetX = parseInt(offsetXSlider.value);
+            const offsetY = parseInt(offsetYSlider.value);
             const textColor = textColorSelect.value;
             const bgColor = bgColorSelect.value;
             const style = styleSelect.value;
@@ -571,7 +654,7 @@
             tempCtx.fillStyle = `rgb(${textRgb[0]}, ${textRgb[1]}, ${textRgb[2]})`;
             tempCtx.font = `bold ${height * 2}px ${font}`;
             tempCtx.textBaseline = 'middle';
-            tempCtx.fillText(text, 2, height);
+            tempCtx.fillText(text, 2 + offsetX, height + offsetY);
 
             // Process pixels
             const imageData = tempCtx.getImageData(0, 0, width, height * 2);
@@ -596,14 +679,14 @@
             }
 
             // Optimize brick placement
-            brickData = optimize ? optimizeBricks(grid, textColor, bgColor) : simpleBricks(grid);
+            brickData = optimize ? optimizeBricks(grid, textColor, bgColor) : simpleBricks(grid, bgColor);
 
             // Render previews
             render2D(grid, width, height * 2);
             render3D(grid, width, height * 2, style);
 
             // Update stats
-            updateStats(brickData, width, height * 2);
+            updateStats(brickData, width, height * 2, style);
 
             // Show sections
             document.getElementById('previewSection').style.display = 'grid';
@@ -749,10 +832,17 @@
             }
         }
 
-        function updateStats(bricks, width, height) {
-            const total = bricks['1x1'] + bricks['1x2'] + bricks['2x2'];
+        function updateStats(bricks, width, height, style) {
+            // Multipliers based on style
+            let multiplier = 1;
+            if (style === 'deep') multiplier = 2; // Deep = 2 layers of bricks
+
+            const total = (bricks['1x1'] + bricks['1x2'] + bricks['2x2']) * multiplier;
             const uniqueParts = Object.keys(bricks.colors).length;
-            const avgCost = 0.06;
+            
+            // Cost estimation based on style
+            let avgCost = 0.05; // Average cost per brick
+
             const cost = total * avgCost;
             const buildMinutes = Math.ceil(total / 50);
 
@@ -771,21 +861,25 @@
             document.getElementById('readability').textContent = '94/100';
 
             // Brick list
+            const typeLabel = style === 'flat' ? 'Tiles' : 'Bricks';
+            
             const list = document.getElementById('brickList');
-            list.innerHTML = `
+            let html = `
                 <div class="brick-item">
-                    <span class="brick-type">2×2 Bricks</span>
-                    <span class="brick-count">${bricks['2x2']}</span>
+                    <span class="brick-type">2×2 ${typeLabel}</span>
+                    <span class="brick-count">${bricks['2x2'] * multiplier}</span>
                 </div>
                 <div class="brick-item">
-                    <span class="brick-type">1×2 Plates</span>
-                    <span class="brick-count">${bricks['1x2']}</span>
+                    <span class="brick-type">1×2 ${typeLabel}</span>
+                    <span class="brick-count">${bricks['1x2'] * multiplier}</span>
                 </div>
                 <div class="brick-item">
-                    <span class="brick-type">1×1 Tiles</span>
-                    <span class="brick-count">${bricks['1x1']}</span>
+                    <span class="brick-type">1×1 ${typeLabel}</span>
+                    <span class="brick-count">${bricks['1x1'] * multiplier}</span>
                 </div>
             `;
+
+            list.innerHTML = html;
         }
 
         generateBtn.addEventListener('click', generateSign);
@@ -798,12 +892,34 @@
 
         exportBtn.addEventListener('click', () => {
             if (!brickData) return;
+            const style = styleSelect.value;
+            let multiplier = style === 'deep' ? 2 : 1;
+            
+            // Define parts based on style
+            let p2x2 = { name: "2x2 Brick", id: "3003", price: 0.08 };
+            let p1x2 = { name: "1x2 Brick", id: "3004", price: 0.06 };
+            let p1x1 = { name: "1x1 Brick", id: "3005", price: 0.04 };
+
+            if (style === 'flat') {
+                p2x2 = { name: "2x2 Tile", id: "3068b", price: 0.06 };
+                p1x2 = { name: "1x2 Tile", id: "3069b", price: 0.05 };
+                p1x1 = { name: "1x1 Tile", id: "3070b", price: 0.03 };
+            }
             
             let csv = 'BlockForge Text Studio - Parts List\n\n';
+            csv += `Build Style: ${style.toUpperCase()}\n`;
             csv += 'Part Type,Quantity,Part Number,Est. Price Each,Total\n';
-            csv += `"2×2 Brick",${brickData['2x2']},"3003",$0.04,$${(brickData['2x2'] * 0.04).toFixed(2)}\n`;
-            csv += `"1×2 Plate",${brickData['1x2']},"3023",$0.03,$${(brickData['1x2'] * 0.03).toFixed(2)}\n`;
-            csv += `"1×1 Tile",${brickData['1x1']},"3070b",$0.02,$${(brickData['1x1'] * 0.02).toFixed(2)}\n`;
+            
+            const q2x2 = brickData['2x2'] * multiplier;
+            const q1x2 = brickData['1x2'] * multiplier;
+            const q1x1 = brickData['1x1'] * multiplier;
+
+            if (q2x2 > 0) csv += `"${p2x2.name}",${q2x2},"${p2x2.id}",$${p2x2.price},$${(q2x2 * p2x2.price).toFixed(2)}\n`;
+            if (q1x2 > 0) csv += `"${p1x2.name}",${q1x2},"${p1x2.id}",$${p1x2.price},$${(q1x2 * p1x2.price).toFixed(2)}\n`;
+            if (q1x1 > 0) csv += `"${p1x1.name}",${q1x1},"${p1x1.id}",$${p1x1.price},$${(q1x1 * p1x1.price).toFixed(2)}\n`;
+
+            const totalCost = (q2x2 * p2x2.price) + (q1x2 * p1x2.price) + (q1x1 * p1x1.price);
+            csv += `\n,,,"TOTAL EST:",$${totalCost.toFixed(2)}\n`;
 
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
