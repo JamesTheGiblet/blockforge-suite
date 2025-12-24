@@ -51,10 +51,13 @@
             --tips-bg: #2d2620;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+        html {
             background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
             min-height: 100vh;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
             padding: 20px;
             color: var(--text-primary);
         }
@@ -589,9 +592,37 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Falling Bricks */
+        #falling-bricks-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1; /* Behind content */
+            overflow: hidden;
+        }
+
+        .falling-brick {
+            position: absolute;
+            border-radius: 2px;
+            opacity: 0.2;
+            background-image: radial-gradient(rgba(0,0,0,0.2) 25%, transparent 25%);
+            background-size: 20px 20px;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Ensure main content is above bricks */
+        .container, .header-bar {
+            position: relative;
+            z-index: 1;
+        }
     </style>
 </head>
 <body>
+    <div id="falling-bricks-container"></div>
     <div class="header-bar">
         <a href="../../index.html" class="back-btn">← Back to BlockForge</a>
         <div class="header-title">BLOCK<span class="forge">FORGE</span> - Image Studio</div>
@@ -2104,6 +2135,59 @@
                 });
             });
         }
+
+        // Falling Bricks Animation (Piling)
+        const brickContainer = document.getElementById('falling-bricks-container');
+        const brickColors = ['#FF6B35', '#004E89', '#FFD700', '#28A745', '#DC3545', '#6C757D', '#17A2B8'];
+        const GRID_SIZE = 20;
+        let numCols = Math.ceil(window.innerWidth / GRID_SIZE);
+        let colHeights = new Array(numCols).fill(0);
+
+        window.addEventListener('resize', () => {
+            numCols = Math.ceil(window.innerWidth / GRID_SIZE);
+            colHeights = new Array(numCols).fill(0);
+            brickContainer.innerHTML = '';
+        });
+
+        function createBrick() {
+            if (document.hidden || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+            const units = Math.floor(Math.random() * 3) + 1;
+            const width = units * GRID_SIZE;
+            const height = 20;
+
+            const maxCol = numCols - units;
+            if (maxCol < 0) return;
+            const startCol = Math.floor(Math.random() * (maxCol + 1));
+
+            let currentStackHeight = 0;
+            for (let i = 0; i < units; i++) {
+                currentStackHeight = Math.max(currentStackHeight, colHeights[startCol + i]);
+            }
+
+            if (currentStackHeight > window.innerHeight) return;
+
+            for (let i = 0; i < units; i++) {
+                colHeights[startCol + i] = currentStackHeight + height;
+            }
+
+            const targetTop = window.innerHeight - currentStackHeight - height;
+
+            const brick = document.createElement('div');
+            brick.classList.add('falling-brick');
+            brick.style.width = (width - 2) + 'px';
+            brick.style.height = (height - 2) + 'px';
+            brick.style.left = (startCol * GRID_SIZE) + 'px';
+            brick.style.backgroundColor = brickColors[Math.floor(Math.random() * brickColors.length)];
+            
+            brickContainer.appendChild(brick);
+
+            brick.animate([
+                { transform: `translateY(${-50}px)` },
+                { transform: `translateY(${targetTop}px)` }
+            ], { duration: 1000 + Math.random() * 1000, easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)', fill: 'forwards' });
+        }
+        setInterval(createBrick, 200);
     </script>
 </body>
 </html>
