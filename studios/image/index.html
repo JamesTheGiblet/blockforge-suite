@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BlockForge - Image Studio</title>
     <meta name="description" content="Convert images into LEGO mosaics with Forge Theory optimization">
-    <link rel="manifest" href="manifest.json">
+    <script>
+        if (window.location.protocol !== 'file:') {
+            const link = document.createElement('link');
+            link.rel = 'manifest';
+            link.href = 'manifest.json';
+            document.head.appendChild(link);
+        }
+    </script>
     <meta name="theme-color" content="#004E89">
     <link rel="icon" type="image/png" href="../../public/icon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -734,10 +741,14 @@
             <div class="control-group">
                 <label style="display: flex; align-items: center; gap: 10px;">
                     <input type="checkbox" id="removeBackgroundCheckbox" style="width: auto; height: 20px;">
-                    Auto-detect & remove background
+                    Remove Background (Flood Fill)
                 </label>
+                <div id="bgToleranceControl" style="display: none; margin-top: 10px;">
+                    <label style="font-size: 12px;">Tolerance: <span id="toleranceValue">30</span></label>
+                    <input type="range" id="toleranceSlider" min="1" max="100" value="30" step="1">
+                </div>
                 <div id="detectedBgInfo" style="display: none; margin-top: 8px; padding: 10px; background: var(--panel-bg); border-radius: 8px; font-size: 13px;">
-                    <strong>Detected:</strong> <span id="detectedBgColor">-</span>
+                    <strong>Detected:</strong> <span id="detectedBgColor">-</span> (Edge Average)
                 </div>
             </div>
 
@@ -868,6 +879,7 @@
         let showGrid = false;
         let backgroundColor = 'Light Bluish Gray';
         let removeBackground = false;
+        let bgTolerance = 30;
         let detectedBackgroundColor = null;
         let tileMap = [];
         let forgeTheoryVisible = false;
@@ -890,6 +902,9 @@
         const gridCheckbox = document.getElementById('gridCheckbox');
         const backgroundColorSelect = document.getElementById('backgroundColorSelect');
         const removeBackgroundCheckbox = document.getElementById('removeBackgroundCheckbox');
+        const bgToleranceControl = document.getElementById('bgToleranceControl');
+        const toleranceSlider = document.getElementById('toleranceSlider');
+        const toleranceValue = document.getElementById('toleranceValue');
         const detectedBgInfo = document.getElementById('detectedBgInfo');
         const detectedBgColor = document.getElementById('detectedBgColor');
         const generateBtn = document.getElementById('generateBtn');
@@ -1021,9 +1036,19 @@
                 backgroundColor = 'none';
                 backgroundColorSelect.value = 'none';
                 backgroundColorSelect.disabled = true;
+                bgToleranceControl.style.display = 'block';
             } else {
                 backgroundColorSelect.disabled = false;
+                bgToleranceControl.style.display = 'none';
             }
+            if (uploadedImage && previewSection.classList.contains('active')) {
+                generateMosaic();
+            }
+        });
+
+        toleranceSlider.addEventListener('input', (e) => {
+            bgTolerance = parseInt(e.target.value);
+            toleranceValue.textContent = bgTolerance;
             if (uploadedImage && previewSection.classList.contains('active')) {
                 generateMosaic();
             }
@@ -1139,7 +1164,8 @@
             csv += 'BUILD SUMMARY\n';
             csv += `Total Tiles,${actualTiles}\n`;
             if (removedTiles > 0) {
-                csv += `Background Removed,${removedTiles} tiles (${((removedTiles / totalGridSpaces) * 100).toFixed(1)}%)\n`;
+                const label = backgroundColor !== 'none' ? 'Exposed Baseplate' : 'Background Removed';
+                csv += `${label},${removedTiles} tiles (${((removedTiles / totalGridSpaces) * 100).toFixed(1)}%)\n`;
                 csv += `Grid Spaces,${totalGridSpaces}\n`;
             }
             csv += `Unique Tile Colors,${Object.keys(colorCounts).length}\n`;
@@ -1423,7 +1449,8 @@
                 
                 tileMap[y].forEach((colorName, x) => {
                     if (colorName === null) {
-                        html += `<div class="tile" style="background: repeating-linear-gradient(45deg, #f0f0f0, #f0f0f0 5px, #e0e0e0 5px, #e0e0e0 10px); border: 1px dashed #ccc;" data-color="No tile (background removed)" title="No tile needed"></div>`;
+                        const label = backgroundColor !== 'none' ? `No tile (${backgroundColor} baseplate)` : 'No tile (background removed)';
+                        html += `<div class="tile" style="background: repeating-linear-gradient(45deg, #f0f0f0, #f0f0f0 5px, #e0e0e0 5px, #e0e0e0 10px); border: 1px dashed #ccc;" data-color="${label}" title="${label}"></div>`;
                     } else {
                         const rgb = LEGO_COLORS[colorName];
                         html += `<div class="tile" style="background: rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]});" data-color="${colorName}" title="${colorName}"></div>`;
@@ -1478,6 +1505,7 @@
             backgroundColorSelect.value = 'Light Bluish Gray';
             backgroundColorSelect.disabled = false;
             removeBackgroundCheckbox.checked = false;
+            bgToleranceControl.style.display = 'none';
             detectedBgInfo.style.display = 'none';
             
             updateForgeTheoryStats();
@@ -1604,6 +1632,7 @@
             corners.forEach(([x, y]) => samples.push([x, y]));
             
             const colorMap = {};
+            const colorSums = {};
             samples.forEach(([x, y]) => {
                 const idx = (y * width + x) * 4;
                 const r = pixels[idx];
@@ -1619,18 +1648,32 @@
                 const key = `${qr},${qg},${qb}`;
                 
                 colorMap[key] = (colorMap[key] || 0) + 1;
+                
+                if (!colorSums[key]) colorSums[key] = {r:0, g:0, b:0, count:0};
+                colorSums[key].r += r;
+                colorSums[key].g += g;
+                colorSums[key].b += b;
+                colorSums[key].count++;
             });
             
             let maxCount = 0;
-            let bgColor = null;
-            for (const [color, count] of Object.entries(colorMap)) {
+            let bestKey = null;
+            for (const [key, count] of Object.entries(colorMap)) {
                 if (count > maxCount) {
                     maxCount = count;
-                    bgColor = color.split(',').map(Number);
+                    bestKey = key;
                 }
             }
             
-            return bgColor;
+            if (bestKey) {
+                const sum = colorSums[bestKey];
+                return [
+                    Math.round(sum.r / sum.count),
+                    Math.round(sum.g / sum.count),
+                    Math.round(sum.b / sum.count)
+                ];
+            }
+            return null;
         }
 
         function removeBackgroundFromImage(imageData, width, height, bgColor, tolerance = 30) {
@@ -1639,26 +1682,55 @@
             const pixels = imageData.data;
             const [bgR, bgG, bgB] = bgColor;
             
-            const maskMap = [];
-            
-            for (let y = 0; y < height; y++) {
-                const row = [];
-                for (let x = 0; x < width; x++) {
-                    const idx = (y * width + x) * 4;
-                    const r = pixels[idx];
-                    const g = pixels[idx + 1];
-                    const b = pixels[idx + 2];
-                    
-                    const distance = Math.sqrt(
-                        Math.pow(r - bgR, 2) +
-                        Math.pow(g - bgG, 2) +
-                        Math.pow(b - bgB, 2)
-                    );
-                    
-                    const isBackground = distance < tolerance;
-                    row.push(isBackground);
+            // Flood Fill Algorithm (BFS)
+            const maskMap = Array(height).fill().map(() => Array(width).fill(false));
+            const visited = new Uint8Array(width * height);
+            const queue = [];
+
+            const matches = (idx) => {
+                const r = pixels[idx];
+                const g = pixels[idx + 1];
+                const b = pixels[idx + 2];
+                const dist = Math.sqrt((r-bgR)**2 + (g-bgG)**2 + (b-bgB)**2);
+                return dist < tolerance;
+            };
+
+            // Seed from edges
+            const addSeed = (x, y) => {
+                const idx = (y * width + x) * 4;
+                const vIdx = y * width + x;
+                if (matches(idx) && !visited[vIdx]) {
+                    queue.push(x, y);
+                    visited[vIdx] = 1;
+                    maskMap[y][x] = true;
                 }
-                maskMap.push(row);
+            };
+
+            // Check all edges
+            for(let x = 0; x < width; x++) { addSeed(x, 0); addSeed(x, height-1); }
+            for(let y = 0; y < height; y++) { addSeed(0, y); addSeed(width-1, y); }
+
+            // Process queue
+            let head = 0;
+            while(head < queue.length) {
+                const cx = queue[head++];
+                const cy = queue[head++];
+                
+                const neighbors = [[cx+1, cy], [cx-1, cy], [cx, cy+1], [cx, cy-1]];
+                
+                for(const [nx, ny] of neighbors) {
+                    if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                        const vIdx = ny * width + nx;
+                        if (!visited[vIdx]) {
+                            const pIdx = vIdx * 4;
+                            if (matches(pIdx)) {
+                                visited[vIdx] = 1;
+                                maskMap[ny][nx] = true;
+                                queue.push(nx, ny);
+                            }
+                        }
+                    }
+                }
             }
             
             return maskMap;
@@ -1718,7 +1790,7 @@
             }
         }
 
-        function applyDithering(imageData, width, height) {
+        function applyDithering(imageData, width, height, protectedColor = null) {
             const pixels = imageData.data;
 
             for (let y = 0; y < height; y++) {
@@ -1729,6 +1801,19 @@
                     const oldB = pixels[idx + 2];
 
                     const { rgb } = findClosestLegoColor(oldR, oldG, oldB);
+
+                    // If this pixel maps to the protected baseplate color, snap it and skip error diffusion
+                    if (protectedColor && 
+                        rgb[0] === protectedColor[0] && 
+                        rgb[1] === protectedColor[1] && 
+                        rgb[2] === protectedColor[2]) {
+                        
+                        pixels[idx] = rgb[0];
+                        pixels[idx + 1] = rgb[1];
+                        pixels[idx + 2] = rgb[2];
+                        continue;
+                    }
+
                     pixels[idx] = rgb[0];
                     pixels[idx + 1] = rgb[1];
                     pixels[idx + 2] = rgb[2];
@@ -1858,7 +1943,7 @@
                 if (removeBackground) {
                     detectedBackgroundColor = detectBackgroundColor(imageData, targetWidth, targetHeight);
                     if (detectedBackgroundColor) {
-                        backgroundMask = removeBackgroundFromImage(imageData, targetWidth, targetHeight, detectedBackgroundColor);
+                        backgroundMask = removeBackgroundFromImage(imageData, targetWidth, targetHeight, detectedBackgroundColor, bgTolerance);
                         
                         detectedBgInfo.style.display = 'block';
                         detectedBgColor.textContent = `RGB(${detectedBackgroundColor[0]}, ${detectedBackgroundColor[1]}, ${detectedBackgroundColor[2]})`;
@@ -1880,7 +1965,11 @@
                 tileMap = [];
 
                 if (enableDither) {
-                    applyDithering(processedData, targetWidth, targetHeight);
+                    let baseplateRgb = null;
+                    if (backgroundColor !== 'none') {
+                        baseplateRgb = LEGO_COLORS[backgroundColor];
+                    }
+                    applyDithering(processedData, targetWidth, targetHeight, baseplateRgb);
                     
                     for (let y = 0; y < targetHeight; y++) {
                         const row = [];
@@ -1896,8 +1985,13 @@
                             }
                             
                             const { name } = findClosestLegoColor(r, g, b);
-                            colorCounts[name] = (colorCounts[name] || 0) + 1;
-                            row.push(name);
+                            
+                            if (backgroundColor !== 'none' && name === backgroundColor) {
+                                row.push(null);
+                            } else {
+                                colorCounts[name] = (colorCounts[name] || 0) + 1;
+                                row.push(name);
+                            }
                         }
                         tileMap.push(row);
                     }
@@ -1921,8 +2015,12 @@
                             processedPixels[i + 1] = rgb[1];
                             processedPixels[i + 2] = rgb[2];
 
-                            colorCounts[name] = (colorCounts[name] || 0) + 1;
-                            row.push(name);
+                            if (backgroundColor !== 'none' && name === backgroundColor) {
+                                row.push(null);
+                            } else {
+                                colorCounts[name] = (colorCounts[name] || 0) + 1;
+                                row.push(name);
+                            }
                         }
                         tileMap.push(row);
                     }
@@ -1942,7 +2040,7 @@
                 const physicalHeightCm = (targetHeight * 8 / 10).toFixed(1);
 
                 document.getElementById('dimensions').textContent = `${targetWidth}×${targetHeight}`;
-                document.getElementById('totalTiles').textContent = removeBackground 
+                document.getElementById('totalTiles').textContent = (removeBackground || backgroundColor !== 'none')
                     ? `${actualTileCount.toLocaleString()} (${totalGridSpaces.toLocaleString()} grid spaces)` 
                     : actualTileCount.toLocaleString();
                 document.getElementById('uniqueColors').textContent = Object.keys(colorCounts).length;

@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BlockForge Suite - Transform Anything into LEGO®</title>
     <meta name="description" content="Transform anything into LEGO® - powered by exponential decay mathematics">
-    <link rel="manifest" href="manifest.json">
+    <script>
+        if (window.location.protocol !== 'file:') {
+            const link = document.createElement('link');
+            link.rel = 'manifest';
+            link.href = 'manifest.json';
+            document.head.appendChild(link);
+        }
+    </script>
     <!-- Theme color meta tags are kept for Chrome/Edge PWA support; not supported in Firefox/Opera -->
     <meta name="theme-color" content="#004E89">
     <meta name="theme-color" content="#004E89" media="(prefers-color-scheme: light)">
@@ -18,7 +25,11 @@
     <link rel="stylesheet" href="shared/styles.css">
     <style>
         /* --- Visual Enhancements & Animations --- */
-        html { scroll-behavior: smooth; }
+        html { 
+            scroll-behavior: smooth; 
+            background-color: var(--bg-color);
+            transition: background-color 0.3s;
+        }
         
         :root {
             --bg-color: #ffffff;
@@ -43,9 +54,9 @@
         }
 
         body {
-            background-color: var(--bg-color);
+            background-color: transparent;
             color: var(--text-color);
-            transition: background-color 0.3s, color 0.3s;
+            transition: color 0.3s;
         }
         
         h1, h2, h3, h4, strong { color: var(--heading-color); }
