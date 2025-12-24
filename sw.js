@@ -4,7 +4,10 @@ const ASSETS = [
     './index.html',
     './shared/styles.css',
     './shared/blockforge-core.js',
-    './manifest.json'
+    './manifest.json',
+    './public/icon.png',
+    './studios/image/index.html',
+    './studios/text/index.html'
 ];
 
 self.addEventListener('install', (event) => {
