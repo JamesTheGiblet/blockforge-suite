@@ -51,6 +51,10 @@
         /* 3. Interactive Studio Cards */
         .studio-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            /* Ensure cards behave like blocks and look right if they become links */
+            display: block;
+            text-decoration: none;
+            color: inherit;
         }
         .studio-card:hover {
             transform: translateY(-5px);
@@ -138,12 +142,11 @@
             <p class="studios-intro">Each studio is a specialized tool for converting specific content types. Studios are being released incrementally.</p>
             
             <div class="studio-grid">
-                <div class="studio-card coming-soon">
+                <a href="studios/image/index.html" class="studio-card">
                     <div class="studio-icon">🖼️</div>
                     <h3>Image Studio</h3>
                     <p>Convert photos and artwork into LEGO mosaics with intelligent color matching and optimization.</p>
-                    <span class="status-badge">Coming Soon</span>
-                </div>
+                </a>
 
                 <div class="studio-card coming-soon">
                     <div class="studio-icon">📝</div>
