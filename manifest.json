@@ -1,0 +1,49 @@
+{
+  "name": "BlockForge Suite",
+  "short_name": "BlockForge",
+  "description": "Transform anything into LEGO® - powered by exponential decay mathematics",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#004E89",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "productivity", "design"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Image Studio",
+      "short_name": "Image",
+      "description": "Convert images to LEGO mosaics",
+      "url": "/studios/image/",
+      "icons": []
+    },
+    {
+      "name": "Text Studio",
+      "short_name": "Text",
+      "description": "Convert text to LEGO displays",
+      "url": "/studios/text/",
+      "icons": []
+    },
+    {
+      "name": "3D Model Studio",
+      "short_name": "3D Model",
+      "description": "Convert 3D models to LEGO sculptures",
+      "url": "/studios/model3d/",
+      "icons": []
+    }
+  ]
+}

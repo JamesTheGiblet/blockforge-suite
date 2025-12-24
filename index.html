@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlockForge Suite - Transform Anything into LEGO®</title>
+    <meta name="description" content="Transform anything into LEGO® - powered by exponential decay mathematics">
+    <link rel="manifest" href="manifest.webmanifest">
+    <!-- Theme color meta tags are kept for Chrome/Edge PWA support; not supported in Firefox/Opera -->
+    <meta name="theme-color" content="#004E89">
+    <meta name="theme-color" content="#004E89" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#004E89" media="(prefers-color-scheme: dark)">
+    <meta name="msapplication-TileColor" content="#004E89">
+    <meta name="msapplication-navbutton-color" content="#004E89">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#004E89">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23FF6B35' width='100' height='100'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="stylesheet" href="shared/styles.css">
+</head>
+<body>
+    <header class="hero">
+        <div class="container">
+            <div class="logo-section">
+                <svg class="logo-icon" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- BlockForge Logo -->
+                    <polygon points="50,20 50,80 20,80 20,100 130,100 130,80 100,80 100,20" fill="#FF6B35"/>
+                    <polygon points="130,20 180,20 180,80 130,80" fill="#004E89"/>
+                    <rect x="130" y="90 " width="50" height="30" fill="#FF6B35"/>
+                    <rect x="140" y="130" width="40" height="30" fill="#FF6B35"/>
+                    <rect x="20" y="130" width="160" height="30" fill="#004E89"/>
+                    <rect x="60" y="170" width="80" height="15" fill="#FF6B35"/>
+                </svg>
+                <h1>BLOCK<span class="forge-text">FORGE</span></h1>
+            </div>
+            <p class="tagline">Transform anything into LEGO® - powered by exponential decay mathematics</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="about">
+            <h2>What is BlockForge?</h2>
+            <p>BlockForge Suite is a collection of specialized studios that convert digital content into LEGO®-compatible brick designs. Each studio uses <strong>Forge Theory</strong> - a universal mathematical framework based on exponential decay - to intelligently optimize conversions while preserving essential characteristics.</p>
+            
+            <div class="forge-theory-card">
+                <h3>🔬 Powered by Forge Theory</h3>
+                <p>Unlike simple pixel-to-brick converters, BlockForge applies exponential decay mathematics to:</p>
+                <ul>
+                    <li><strong>Minimize information loss</strong> during quantization</li>
+                    <li><strong>Optimize brick usage</strong> for buildability</li>
+                    <li><strong>Preserve perceptual quality</strong> in final builds</li>
+                    <li><strong>Balance detail vs. complexity</strong> intelligently</li>
+                </ul>
+                <button class="theory-toggle" onclick="toggleTheoryDetails()">
+                    <span id="toggle-text">Show detailed mathematics</span>
+                </button>
+                <div id="theory-details" class="theory-details hidden">
+                    <h4>The Mathematics Behind BlockForge</h4>
+                    <p>Forge Theory models the conversion process as an exponential decay function:</p>
+                    <code>I(t) = I₀ · e^(-λt)</code>
+                    <p>Where:</p>
+                    <ul>
+                        <li><strong>I(t)</strong> = Information retained at quantization level t</li>
+                        <li><strong>I₀</strong> = Initial information content</li>
+                        <li><strong>λ</strong> = Decay constant (varies by content type)</li>
+                        <li><strong>t</strong> = Quantization steps applied</li>
+                    </ul>
+                    <p>This allows BlockForge to find the optimal balance between detail preservation and practical buildability across all conversion types.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="studios">
+            <h2>Available Studios</h2>
+            <p class="studios-intro">Each studio is a specialized tool for converting specific content types. Studios are being released incrementally.</p>
+            
+            <div class="studio-grid">
+                <div class="studio-card coming-soon">
+                    <div class="studio-icon">🖼️</div>
+                    <h3>Image Studio</h3>
+                    <p>Convert photos and artwork into LEGO mosaics with intelligent color matching and optimization.</p>
+                    <span class="status-badge">Coming Soon</span>
+                </div>
+
+                <div class="studio-card coming-soon">
+                    <div class="studio-icon">📝</div>
+                    <h3>Text Studio</h3>
+                    <p>Transform text into buildable LEGO signs and displays with optimized letter forms.</p>
+                    <span class="status-badge">Coming Soon</span>
+                </div>
+
+                <div class="studio-card coming-soon">
+                    <div class="studio-icon">🎲</div>
+                    <h3>3D Model Studio</h3>
+                    <p>Convert 3D models into LEGO sculptures with structural integrity analysis.</p>
+                    <span class="status-badge">Coming Soon</span>
+                </div>
+
+                <div class="studio-card coming-soon">
+                    <div class="studio-icon">🎨</div>
+                    <h3>Pattern Studio</h3>
+                    <p>Generate repeating patterns and tessellations optimized for LEGO construction.</p>
+                    <span class="status-badge">Coming Soon</span>
+                </div>
+
+                <div class="studio-card coming-soon">
+                    <div class="studio-icon">🏗️</div>
+                    <h3>Architecture Studio</h3>
+                    <p>Design buildings and structures with load-bearing analysis and stability optimization.</p>
+                    <span class="status-badge">Coming Soon</span>
+                </div>
+
+                <div class="studio-card coming-soon">
+                    <div class="studio-icon">🎵</div>
+                    <h3>Audio Studio</h3>
+                    <p>Visualize audio waveforms and frequencies as buildable LEGO sculptures.</p>
+                    <span class="status-badge">Coming Soon</span>
+                </div>
+
+                <div class="studio-card coming-soon">
+                    <div class="studio-icon">📊</div>
+                    <h3>Data Studio</h3>
+                    <p>Transform data visualizations and charts into tactile LEGO representations.</p>
+                    <span class="status-badge">Coming Soon</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <h2>Why BlockForge?</h2>
+            <div class="feature-grid">
+                <div class="feature">
+                    <span class="feature-icon">🧮</span>
+                    <h3>Mathematical Precision</h3>
+                    <p>Forge Theory ensures optimal conversions backed by validated decay mathematics</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">🔧</span>
+                    <h3>Practical Buildability</h3>
+                    <p>Designs are optimized for real-world construction with actual LEGO bricks</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">⚡</span>
+                    <h3>Fast & Offline</h3>
+                    <p>Progressive Web App technology means studios work offline after first load</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">🎯</span>
+                    <h3>Specialized Tools</h3>
+                    <p>Each studio is purpose-built for specific content types, not one-size-fits-all</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-dev">
+            <h2>About the Developer</h2>
+            <p>BlockForge Suite is created by <strong>James</strong> (<a href="https://github.com/ModularDev-Tools" target="_blank" rel="noopener">ModularDev-Tools</a>), a polymath creator operating under Giblets Creations. BlockForge is part of a larger portfolio exploring <strong>Forge Theory</strong> - a universal mathematical framework validated across domains from pharmacokinetics to developmental biology.</p>
+            <div class="dev-links">
+                <a href="https://github.com/ModularDev-Tools" target="_blank" rel="noopener" class="btn-secondary">View GitHub Portfolio</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Giblets Creations. LEGO® is a trademark of the LEGO Group, which does not sponsor, authorize or endorse this software.</p>
+            <p class="forge-signature">Powered by <strong>Forge Theory</strong> - Exponential decay mathematics validated across domains</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleTheoryDetails() {
+            const details = document.getElementById('theory-details');
+            const toggleText = document.getElementById('toggle-text');
+            
+            if (details.classList.contains('hidden')) {
+                details.classList.remove('hidden');
+                toggleText.textContent = 'Hide detailed mathematics';
+            } else {
+                details.classList.add('hidden');
+                toggleText.textContent = 'Show detailed mathematics';
+            }
+        }
+
+        // PWA installation
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Could show an install button here
+        });
+
+        // Register service worker when available
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(() => {
+                    console.log('Service worker registration optional');
+                });
+            });
+        }
+    </script>
+</body>
+</html>
