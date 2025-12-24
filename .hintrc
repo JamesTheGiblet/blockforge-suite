@@ -10,6 +10,15 @@
           "meta[name=theme-color]"
         ]
       }
+    ],
+    "no-inline-styles": "off",
+    "compat-api/css": [
+      "default",
+      {
+        "ignore": [
+          "image-rendering: crisp-edges"
+        ]
+      }
     ]
   }
 }
